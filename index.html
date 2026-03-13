@@ -151,7 +151,7 @@ code{background:#fff3e0;padding:2px 7px;border-radius:4px;font-family:monospace;
 
 <script>
 // ── CONFIGURE YOUR CLOUDFLARE WORKER URL HERE ────────────────────────────────
-const WORKER_URL = 'https://bitter-lake-e372.safety-d73.workers.dev';
+const WORKER_URL = '';
 // ────────────────────────────────────────────────────────────────────────────
 
 const DRV = [
@@ -217,7 +217,7 @@ function pd(s) { if (!s) return null; const d = new Date(s.replace(' ','T')+'Z')
 function tf(d) { return d.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:true, timeZone:'UTC'}); }
 
 async function proxyPost(target, body) {
-  const r = await fetch(WORKER_URL + '/proxy', {
+  const r = await fetch('/proxy', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ target, body })
