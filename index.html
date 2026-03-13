@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAFIMA TRUCKING — Logbook Check</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#222;font-size:14px}
+header{background:#1a73e8;color:#fff;padding:16px 24px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+header h1{font-size:18px;font-weight:700}
+header p{font-size:12px;opacity:.8;margin-top:2px}
+.main{max-width:960px;margin:24px auto;padding:0 16px}
+.tabs{display:flex;border-bottom:2px solid #dde1e7;margin-bottom:20px}
+.tab{padding:10px 22px;cursor:pointer;font-size:13px;font-weight:600;color:#888;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab:hover{color:#1a73e8}
+.tab.on{color:#1a73e8;border-bottom-color:#1a73e8}
+.card{background:#fff;border:1px solid #dde1e7;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.cl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#aaa;margin-bottom:12px}
+.dg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:14px}
+.db{padding:10px 12px;border:1.5px solid #e0e4ec;border-radius:9px;background:#fafbfc;cursor:pointer;font-size:13px;font-weight:500;transition:all .12s;line-height:1.4}
+.db:hover{background:#eef2ff;border-color:#aab8f5}
+.db.sel{background:#e8f0fe;border-color:#4285f4;color:#1a56db}
+.db small{display:block;font-size:11px;color:#aaa;font-weight:400;margin-top:2px}
+.db.sel small{color:#6b9df4}
+input[type=date],.hin{border:1.5px solid #e0e4ec;border-radius:8px;padding:8px 12px;font-size:13px;outline:none;transition:border .15s}
+input[type=date]:focus,.hin:focus{border-color:#4285f4}
+.hin{width:100%;font-family:monospace;font-size:12px}
+.sm{padding:7px 14px;border:1.5px solid #e0e4ec;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;background:#fff;transition:all .12s;color:#555}
+.sm:hover{background:#f0f4ff;border-color:#aab8f5;color:#1a73e8}
+.run{width:100%;padding:14px;background:#1a73e8;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.2px;transition:background .15s;margin-top:4px}
+.run:hover{background:#1557b0}
+.run:disabled{background:#b0bec5;cursor:not-allowed}
+.pb{height:5px;background:#e4e8ef;border-radius:3px;margin-top:12px;overflow:hidden}
+.pf{height:100%;background:#1a73e8;border-radius:3px;transition:width .4s;width:0}
+.logbox{background:#1a1d23;color:#8fa0b8;border-radius:10px;padding:14px 16px;font-family:'Courier New',monospace;font-size:11.5px;min-height:90px;max-height:240px;overflow-y:auto;margin-top:14px;line-height:1.75}
+.logbox .ok{color:#4caf50}.logbox .warn{color:#ffb74d}.logbox .err{color:#ef5350}.logbox .inf{color:#64b5f6}
+.hidden{display:none}
+.s3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.sc{background:#fff;border:1px solid #e4e8ef;border-radius:12px;padding:18px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.sc .v{font-size:34px;font-weight:800;line-height:1}
+.sc .l{font-size:11px;color:#aaa;margin-top:5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.sc.red .v{color:#c62828}.sc.grn .v{color:#2e7d32}.sc.ora .v{color:#e65100}
+.dr{border:1.5px solid #e4e8ef;border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.03)}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;background:#fafbfc;cursor:pointer;transition:background .12s}
+.dh:hover{background:#f0f4ff}
+.dn{font-weight:700;font-size:14px}.dt{font-size:11px;color:#bbb;margin-top:2px}
+.badge{font-size:11.5px;padding:4px 12px;border-radius:20px;font-weight:700}
+.br{background:#ffebee;color:#c62828}.bg{background:#e8f5e9;color:#2e7d32}.bx{background:#f5f5f5;color:#999}
+.vt{width:100%;border-collapse:collapse;font-size:12.5px}
+.vt th{background:#f8f9fb;padding:9px 16px;text-align:left;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.vt td{padding:10px 16px;border-top:1px solid #f0f2f5}
+.vt tr:hover td{background:#fafbff}
+.vtot{padding:11px 18px;background:#fff8f8;border-top:2px solid #ffd0d0;font-size:12px;font-weight:700;color:#c62828}
+.ins{background:#fffde7;border:1.5px solid #ffe082;border-radius:10px;padding:18px 20px;margin-bottom:16px}
+.ins h3{font-size:13px;font-weight:700;color:#e65100;margin-bottom:12px}
+.ins ol{padding-left:20px;font-size:13px;line-height:2.1;color:#666}
+code{background:#fff3e0;padding:2px 7px;border-radius:4px;font-family:monospace;font-size:11.5px;color:#b45309}
+@media(max-width:600px){.s3{grid-template-columns:1fr 1fr}.dg{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<header>
+  <div>🚛</div>
+  <div>
+    <h1>DAFIMA TRUCKING — Logbook Check</h1>
+    <p>GPS (ETM Solutions) × RODS (Apollo ELD) · Daily cross-check</p>
+  </div>
+</header>
+
+<div class="main">
+  <div class="tabs">
+    <div class="tab on" id="t1" onclick="sw(1)">▶ Run Check</div>
+    <div class="tab" id="t2" onclick="sw(2)">📋 Report</div>
+    <div class="tab" id="t3" onclick="sw(3)">⚙ Setup</div>
+  </div>
+
+  <!-- TAB 1: RUN -->
+  <div id="p1">
+    <div class="card">
+      <div class="cl">1. Select Date</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <input type="date" id="dt">
+        <button class="sm" onclick="setY()">Yesterday</button>
+        <button class="sm" onclick="setT()">Today</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cl">2. Select Drivers</div>
+      <div class="dg" id="dg"></div>
+      <div style="display:flex;gap:8px">
+        <button class="sm" onclick="sAll()">Select all</button>
+        <button class="sm" onclick="sNone()">Clear all</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cl">3. Session Hash (ETM Solutions)</div>
+      <input class="hin" id="hi" placeholder="Paste your ETM session hash here...">
+      <div style="font-size:11px;color:#bbb;margin-top:7px">
+        See the <strong>Setup</strong> tab for how to get this. Updates when you log in to ETM.
+      </div>
+    </div>
+
+    <button class="run" id="rb" onclick="go()">▶ Run Logbook Check</button>
+    <div class="pb"><div class="pf" id="pf"></div></div>
+    <div class="logbox" id="lg">Ready — fill in the fields above and click Run.</div>
+  </div>
+
+  <!-- TAB 2: REPORT -->
+  <div id="p2" class="hidden">
+    <div id="nr" style="text-align:center;padding:60px 20px;color:#ccc;font-size:16px">
+      📋 No report yet.<br>
+      <span style="font-size:13px;margin-top:8px;display:block">Go to <strong>Run Check</strong> and run a check first.</span>
+    </div>
+    <div id="ra" class="hidden"></div>
+  </div>
+
+  <!-- TAB 3: SETUP -->
+  <div id="p3" class="hidden">
+    <div class="ins">
+      <h3>🔑 How to get your Session Hash</h3>
+      <ol>
+        <li>Make sure you are logged into <strong>my.etmsolutionsusa.com</strong></li>
+        <li>Press <code>F12</code> → click the <strong>Network</strong> tab at the top</li>
+        <li>In the filter bar, type <code>tracker/list</code></li>
+        <li>Press <code>F5</code> to reload the page — a request named <strong>list</strong> will appear</li>
+        <li>Click on <strong>list</strong> → click <strong>Payload</strong> on the right panel</li>
+        <li>Copy the long value next to <code>hash</code> → paste it in the Run Check tab</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <div class="cl">Driver ↔ Truck Reference</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="background:#f8f9fb">
+            <th style="padding:8px 14px;text-align:left;font-size:11px;color:#888;font-weight:700">Truck</th>
+            <th style="padding:8px 14px;text-align:left;font-size:11px;color:#888;font-weight:700">Driver</th>
+            <th style="padding:8px 14px;text-align:left;font-size:11px;color:#888;font-weight:700">GPS ID</th>
+            <th style="padding:8px 14px;text-align:left;font-size:11px;color:#888;font-weight:700">ELD Username</th>
+          </tr>
+        </thead>
+        <tbody id="rtb"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIGURE YOUR CLOUDFLARE WORKER URL HERE ────────────────────────────────
+const WORKER_URL = 'https://bitter-lake-e372.safety-d73.workers.dev';
+// ────────────────────────────────────────────────────────────────────────────
+
+const DRV = [
+  { t:'#8001', n:'Michael Smith',         g:3364111, e:'mrsmith'     },
+  { t:'#8002', n:'Dominic Spriggs',        g:3364118, e:'spriggs'    },
+  { t:'#8003', n:'Renato Deoliveira',      g:3364122, e:'renatopd'   },
+  { t:'#8004', n:'Claudia Sosa',           g:3364120, e:'claudiay'   },
+  { t:'#8005', n:'Cleber Rocha',           g:3364123, e:'cleberocha' },
+  { t:'#8006', n:'Jesus Rosa Santiago',    g:3397906, e:'jesusrosan' },
+  { t:'#8007', n:'Javier Otero Melendez',  g:3397894, e:'javiendez'  },
+  { t:'#8008', n:'Jose Fernandez',         g:3397889, e:'joseaf'     },
+  { t:'#8009', n:'Sterling Cobourne',      g:3397881, e:'sterlingec' },
+  { t:'#8010', n:'Raymond',                g:3397904, e:'joavenshy'  },
+];
+
+let sel = new Set(DRV.map((_,i) => i)), rep = [];
+
+(function init() {
+  setY();
+  const dg = document.getElementById('dg');
+  DRV.forEach((d, i) => {
+    const b = document.createElement('div');
+    b.className = 'db sel'; b.dataset.i = i;
+    b.innerHTML = d.n + '<small>' + d.t + '</small>';
+    b.onclick = () => { b.classList.toggle('sel'); sel.has(i) ? sel.delete(i) : sel.add(i); };
+    dg.appendChild(b);
+  });
+  const tb = document.getElementById('rtb');
+  DRV.forEach(d => {
+    tb.innerHTML += '<tr style="border-top:1px solid #f0f2f5">'
+      + '<td style="padding:8px 14px;font-weight:600">' + d.t + '</td>'
+      + '<td style="padding:8px 14px">' + d.n + '</td>'
+      + '<td style="padding:8px 14px;font-family:monospace;font-size:11px;color:#888">' + d.g + '</td>'
+      + '<td style="padding:8px 14px;font-family:monospace;font-size:11px;color:#888">' + d.e + '</td>'
+      + '</tr>';
+  });
+  const h = localStorage.getItem('dh');
+  if (h) document.getElementById('hi').value = h;
+})();
+
+function sw(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('p'+i).classList.toggle('hidden', i !== n);
+    document.getElementById('t'+i).classList.toggle('on', i === n);
+  });
+}
+function setY() { const d = new Date(); d.setDate(d.getDate()-1); document.getElementById('dt').value = d.toISOString().split('T')[0]; }
+function setT() { document.getElementById('dt').value = new Date().toISOString().split('T')[0]; }
+function sAll()  { document.querySelectorAll('.db').forEach(b => { b.classList.add('sel');    sel.add(+b.dataset.i); }); }
+function sNone() { document.querySelectorAll('.db').forEach(b => { b.classList.remove('sel'); sel.delete(+b.dataset.i); }); }
+
+function lg(m, c) {
+  const el = document.getElementById('lg');
+  const d = document.createElement('div');
+  if (c) d.className = c;
+  d.textContent = new Date().toLocaleTimeString('en-US', {hour12:false}) + ' | ' + m;
+  el.appendChild(d); el.scrollTop = el.scrollHeight;
+}
+function pf(p) { document.getElementById('pf').style.width = p + '%'; }
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function fm(m) { const h = Math.floor(m/60), n = m%60; return h ? h+'h '+n+'m' : n+'m'; }
+function pd(s) { if (!s) return null; const d = new Date(s.replace(' ','T')+'Z'); return isNaN(d) ? null : d; }
+function tf(d) { return d.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:true, timeZone:'UTC'}); }
+
+async function proxyPost(target, body) {
+  const r = await fetch(WORKER_URL + '/proxy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ target, body })
+  });
+  return r.json();
+}
+
+async function go() {
+  const hash = document.getElementById('hi').value.trim();
+  const ds   = document.getElementById('dt').value;
+  if (!ds)    { alert('Select a date.'); return; }
+  if (!hash)  { alert('Paste your session hash.\nSee the Setup tab for instructions.'); return; }
+  if (!sel.size) { alert('Select at least one driver.'); return; }
+
+  localStorage.setItem('dh', hash);
+  const btn = document.getElementById('rb');
+  btn.disabled = true; btn.textContent = '⏳ Checking...';
+  document.getElementById('lg').innerHTML = '';
+  rep = [];
+
+  const from = ds + ' 00:00:00', to = ds + ' 23:59:59';
+  lg('Date: ' + ds + '  |  Drivers: ' + sel.size, 'inf');
+  lg('─────────────────────────────────────────────');
+
+  const drivers = DRV.filter((_, i) => sel.has(i));
+  let done = 0;
+
+  for (const d of drivers) {
+    lg('Checking ' + d.n + ' ' + d.t + '...', 'inf');
+    try {
+      const gps = await proxyPost(
+        'https://my.etmsolutionsusa.com/api-v2/track/list',
+        { hash, tracker_id: d.g, from, to }
+      );
+      if (!gps.success) throw new Error('GPS: ' + (gps.status && gps.status.description ? gps.status.description : JSON.stringify(gps.status)));
+
+      const trips = gps.list || [];
+      if (!trips.length) {
+        lg('  ○ No GPS movement recorded');
+        rep.push({ d, viols:[], noGps:true, tot:0 });
+        done++; pf(Math.round(done/drivers.length*100)); continue;
+      }
+      lg('  GPS: ' + trips.length + ' trip(s) found');
+
+      const rods = await getRods(d, ds, hash);
+      lg('  RODS: ' + rods.length + ' Driving event(s) found');
+
+      const viols = [];
+      for (const tr of trips) {
+        const s = pd(tr.start_date), e = pd(tr.end_date);
+        if (!s || !e) continue;
+        const dur = Math.round((e - s) / 60000);
+        if (dur < 2) continue;
+        const covered = rods.some(r => r.s <= e.getTime()+300000 && r.e >= s.getTime()-300000);
+        if (!covered) {
+          viols.push({
+            ss: tf(s), es: tf(e), dur,
+            mi: Math.round((tr.length || 0) * 0.621371),
+            route: (tr.end_address || '').split(',')[0] || '—'
+          });
+        }
+      }
+
+      const tot = viols.reduce((a, v) => a + v.dur, 0);
+      if (viols.length) lg('  ⚠ ' + viols.length + ' violation(s) — ' + fm(tot) + ' unlogged', 'warn');
+      else              lg('  ✓ All trips logged correctly', 'ok');
+      rep.push({ d, viols, tot, noGps:false });
+
+    } catch(ex) {
+      lg('  ✗ ERROR: ' + ex.message, 'err');
+      rep.push({ d, viols:[], tot:0, noGps:false, error:ex.message });
+    }
+    done++; pf(Math.round(done/drivers.length*100));
+    await sleep(350);
+  }
+
+  const nv = rep.filter(r => r.viols && r.viols.length > 0).length;
+  lg('─────────────────────────────────────────────');
+  lg('Done! ' + nv + ' driver(s) with violations out of ' + drivers.length + ' checked.', nv ? 'warn' : 'ok');
+  btn.disabled = false; btn.textContent = '▶ Run Logbook Check';
+  buildRep(ds); sw(2);
+}
+
+async function getRods(drv, ds, hash) {
+  try {
+    const r = await proxyPost(
+      'https://apolloeld.com/api/v1/logs/driver/' + drv.e,
+      { date: ds, hash }
+    );
+    const evs = r.events || r.logs || r.data || [];
+    return evs.map(e => {
+      const st = String(e.duty_status || e.event_type || e.status || '').toUpperCase();
+      if (!st.startsWith('D') && !st.includes('DRIV')) return null;
+      return {
+        s: new Date((e.start_time || e.from || 0) * 1000).getTime(),
+        e: new Date((e.end_time   || e.to   || 0) * 1000).getTime()
+      };
+    }).filter(Boolean);
+  } catch { return []; }
+}
+
+function buildRep(ds) {
+  const area = document.getElementById('ra');
+  document.getElementById('nr').classList.add('hidden');
+  area.classList.remove('hidden');
+
+  const nv = rep.filter(r => r.viols && r.viols.length > 0).length;
+  const ok = rep.filter(r => !r.noGps && !r.error && !(r.viols && r.viols.length)).length;
+  const tm = rep.reduce((a, r) => a + (r.tot || 0), 0);
+
+  let h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">'
+    + '<div><div style="font-size:20px;font-weight:800">Report — ' + ds + '</div>'
+    + '<div style="font-size:12px;color:#aaa;margin-top:3px">Generated ' + new Date().toLocaleString() + '</div></div>'
+    + '<button class="sm" onclick="copyRep(\'' + ds + '\')">📋 Copy as text</button></div>';
+
+  h += '<div class="s3">'
+    + '<div class="sc red"><div class="v">' + nv + '</div><div class="l">Violations</div></div>'
+    + '<div class="sc ora"><div class="v">' + (tm ? fm(tm) : '0m') + '</div><div class="l">Total unlogged</div></div>'
+    + '<div class="sc grn"><div class="v">' + ok + '</div><div class="l">Drivers OK</div></div>'
+    + '</div>';
+
+  const sorted = [...rep].sort((a,b) => (b.viols&&b.viols.length||0) - (a.viols&&a.viols.length||0));
+  sorted.forEach((r, i) => {
+    const badge = r.error         ? '<span class="badge bx">Error</span>'
+      : r.noGps                   ? '<span class="badge bx">No GPS data</span>'
+      : r.viols && r.viols.length ? '<span class="badge br">⚠ ' + r.viols.length + ' violation(s)</span>'
+                                  : '<span class="badge bg">✓ OK</span>';
+    h += '<div class="dr"><div class="dh" onclick="tog(\'dd' + i + '\')">'
+       + '<div><div class="dn">' + r.d.n + '</div><div class="dt">' + r.d.t + '</div></div>'
+       + badge + '</div>';
+
+    if (r.viols && r.viols.length) {
+      h += '<div id="dd' + i + '"><table class="vt"><thead><tr>'
+         + '<th>Start</th><th>End</th><th>Duration</th><th>Est. Miles</th><th>Destination</th>'
+         + '</tr></thead><tbody>';
+      r.viols.forEach(v => {
+        h += '<tr><td>' + v.ss + '</td><td>' + v.es + '</td>'
+           + '<td style="font-weight:700;color:#c62828">' + fm(v.dur) + '</td>'
+           + '<td>' + v.mi + '</td>'
+           + '<td style="color:#888;font-size:12px">' + v.route + '</td></tr>';
+      });
+      h += '</tbody></table><div class="vtot">Total unlogged: ' + fm(r.tot) + ' across ' + r.viols.length + ' event(s)</div></div>';
+    } else {
+      const msg = r.error  ? 'Error: ' + r.error
+        : r.noGps ? 'No GPS movement recorded on this date.'
+                  : 'All GPS trips match RODS Driving status. ✓';
+      const col = r.error ? '#ef9a9a' : r.noGps ? '#bbb' : '#4caf50';
+      h += '<div id="dd' + i + '" class="hidden"><div style="padding:12px 18px;font-size:12.5px;color:' + col + '">' + msg + '</div></div>';
+    }
+    h += '</div>';
+  });
+
+  area.innerHTML = h;
+}
+
+function tog(id) { const e = document.getElementById(id); if (e) e.classList.toggle('hidden'); }
+
+function copyRep(ds) {
+  let txt = 'DAFIMA TRUCKING — Logbook Check\nDate: ' + ds + '\nGenerated: ' + new Date().toLocaleString() + '\n' + '='.repeat(55) + '\n\n';
+  rep.forEach(r => {
+    txt += r.d.t + '  ' + r.d.n + ': ';
+    if (r.noGps)              { txt += 'No GPS data\n'; return; }
+    if (r.error)              { txt += 'Error: ' + r.error + '\n'; return; }
+    if (!r.viols || !r.viols.length) { txt += 'OK ✓\n'; return; }
+    txt += r.viols.length + ' violation(s) — ' + fm(r.tot) + ' unlogged\n';
+    r.viols.forEach(v => { txt += '   • ' + v.ss + ' → ' + v.es + '  (' + fm(v.dur) + ', ~' + v.mi + ' mi)\n'; });
+  });
+  const nv = rep.filter(r => r.viols && r.viols.length > 0).length;
+  txt += '\nSUMMARY: ' + nv + ' driver(s) with violations | Total unlogged: ' + fm(rep.reduce((a,r) => a+(r.tot||0), 0));
+  navigator.clipboard.writeText(txt)
+    .then(() => alert('✅ Report copied to clipboard!'))
+    .catch(() => alert('Copy failed — please select and copy manually.'));
+}
+</script>
+</body>
+</html>
